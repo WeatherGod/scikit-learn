@@ -45,7 +45,7 @@ class _Hungarian(object):
 
         Parameters
         ===========
-        cost_matrix: 2D square matrix
+        cost_matrix: 2D matrix
                 The cost matrix. 
 
         Returns
@@ -54,15 +54,18 @@ class _Hungarian(object):
             The pairs of (col, row) indices in the original array giving
             the original ordering.
         """
-        self.C = cost_matrix.copy()
+        orig_c = np.atleast_2d(cost_matrix.copy())
+        self._orig_n = orig_c.shape[0]
+        self._orig_m = orig_c.shape[1]
+        self.C = self._pad_matrix(orig_c)
         self.n = n = self.C.shape[0]
-        self.m = m = self.C.shape[1]
+
         self.row_uncovered = np.ones(n, dtype=np.bool)
-        self.col_uncovered = np.ones(m, dtype=np.bool)
+        self.col_uncovered = np.ones(n, dtype=np.bool)
         self.Z0_r = 0
         self.Z0_c = 0
-        self.path = np.zeros((n+m, 2), dtype=int)
-        self.marked = np.zeros((n, m), dtype=int)
+        self.path = np.zeros((2*n, 2), dtype=int)
+        self.marked = np.zeros((n, n), dtype=int)
 
         done = False
         step = 1
@@ -73,11 +76,6 @@ class _Hungarian(object):
                   5 : self._step5,
                   6 : self._step6 }
 
-        if m == 0 or n == 0 :
-            # No need to bother with assignments if one of the dimensions
-            # of the cost matrix is zero-length.
-            done = True
-
         while not done:
             try:
                 func = steps[step]
@@ -86,9 +84,18 @@ class _Hungarian(object):
                 done = True
 
         # Look for the starred columns
-        results = np.array(np.where(self.marked == 1)).T
+        results = np.array(np.where(self.marked[:self._orig_n,
+                                                :self._orig_m] == 1)).T
 
         return results.tolist()
+
+    def _pad_matrix(self, cost_matrix, pad_value=0) :
+        n = max(cost_matrix.shape)
+        padded = np.empty((n, n), dtype=cost_matrix.dtype)
+        padded[:] = pad_value
+        padded[:cost_matrix.shape[0], :cost_matrix.shape[1]] = cost_matrix
+
+        return padded
 
     def _step1(self):
         """ Steps 1 and 2 in the wikipedia page.
@@ -117,7 +124,7 @@ class _Hungarian(object):
         marked = (self.marked == 1)
         self.col_uncovered[np.any(marked, axis=0)] = False
 
-        if marked.sum() >= min(self.m, self.n) :
+        if marked.sum() >= self.n :
             return 7 # done
         else:
             return 4
@@ -135,10 +142,9 @@ class _Hungarian(object):
         covered_C = C*self.row_uncovered[:, np.newaxis]
         covered_C *= self.col_uncovered.astype(np.int)
         n = self.n
-        m = self.m
         while True:
             # Find an uncovered zero
-            row, col = np.unravel_index(np.argmax(covered_C), (n, m))
+            row, col = np.unravel_index(np.argmax(covered_C), (n, n))
             if covered_C[row, col] == 0:
                 return 6
             else:

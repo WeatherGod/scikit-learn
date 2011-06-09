@@ -35,8 +35,8 @@ def test_hungarian():
                  15
                 ),
 
-                ## n == 1, m == 0 matrix
-                ([[]],
+                ## n == 2, m == 0 matrix
+                ([[],[]],
                  0
                 ),
                ]
@@ -49,6 +49,14 @@ def test_hungarian():
         total_cost = 0
         for r, c in indexes:
             x = cost_matrix[r, c]
+            total_cost += x
+        assert expected_total == total_cost
+
+        # The transpose should be identical
+        indexes = m.compute(cost_matrix.T)
+        total_cost = 0
+        for r, c in indexes:
+            x = cost_matrix[c, r]
             total_cost += x
         assert expected_total == total_cost
 
