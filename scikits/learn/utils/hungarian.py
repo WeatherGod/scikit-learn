@@ -76,6 +76,11 @@ class _Hungarian(object):
                   5 : self._step5,
                   6 : self._step6 }
 
+        if self._orig_n == 0 or self._orig_m == 0 :
+            # No need to bother with assignments if one of the dimensions
+            # of the cost matrix is zero-length.
+            done = True
+
         while not done:
             try:
                 func = steps[step]
