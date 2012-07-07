@@ -1,12 +1,80 @@
 
-.. currentmodule:: scikits.learn
+.. currentmodule:: sklearn
+
+.. _changes_0_9:
+
+0.9
+===
+
+TODO
+
+Changelog
+---------
+
+TODO
+
+
+API changes summary
+-------------------
+
+Here are the code migration instructions when updgrading from scikit-learn
+version 0.8:
+
+  - The ``scikits.learn`` package was renamed ``sklearn``. There is
+    still a ``scikits.learn`` package alias for backward compatibility.
+
+    Third-party projects with a dependency on scikit-learn 0.9+ should
+    upgrade their codebase. For instance under Linux / MacOSX just run
+    (make a backup first!)::
+
+      find -name "*.py" | xargs sed -i 's/\bscikits.learn\b/sklearn/g'
+
+  - Estimators no longer accept model parameters as ``fit`` arguments:
+    instead all parameters must be only be passed as constructor
+    arguments or using the now public ``set_params`` method inhereted
+    from :class:`base.BaseEstimator`.
+
+    Some estimators can still accept keyword arguments on the ``fit``
+    but this is restricted to data-dependent values (e.g. a Gram matrix
+    or an affinity matrix that are precomputed from the ``X`` data matrix.
+
+  - The ``cross_val`` package has been renamed to ``cross_validation``
+    although there is also a ``cross_val`` package alias in place for
+    backward compatibility.
+
+    Third-party projects with a dependency on scikit-learn 0.9+ should
+    upgrade their codebase. For instance under Linux / MacOSX just run
+    (make a backup first!)::
+
+      find -name "*.py" | xargs sed -i 's/\bcross_val\b/cross_validation/g'
+
+  - The ``score_func`` argument of the
+    ``sklearn.cross_validation.cross_val_score`` function is now expected
+    to accept ``y_test`` and ``y_predicted`` as only arguments for
+    classification and regression tasks or ``X_test`` for unsupervised
+    estimators.
+
+  - The ``sklearn.hmm`` has been marked as orphaned: it will be removed
+    from scikit-learn in version 0.11 unless someone steps up to
+    contribute documentation, examples and fix lurking numerical
+    stability issues.
+
+Backward compatibilty package aliases and other deprecated classes and
+functions will be removed in version 0.11.
+
+
+People
+------
+
+TODO
+
 
 .. _changes_0_8:
 
 0.8
 ===
 
-scikits.learn 0.8 was released on May 2011, one month after the first
+scikit-learn 0.8 was released on May 2011, one month after the first
 "international" `scikit-learn coding sprint
 <https://github.com/scikit-learn/scikit-learn/wiki/Upcoming-events>`_ and is
 marked by the inclusion of important modules: :ref:`hierarchical_clustering`,
@@ -30,7 +98,7 @@ Several new modules where introduced during this release:
 
   - :ref:`NMF` module `Vlad Niculae`_
 
-  - Implementation of the :ref:`oracle_apprroximating_shrinkage` algorithm by
+  - Implementation of the :ref:`oracle_approximating_shrinkage` algorithm by
     `Virgile Fritsch`_ in the :ref:`covariance` module.
 
 
@@ -105,7 +173,7 @@ People that made this release possible preceeded by number of commits:
 0.7
 ===
 
-scikits.learn 0.7 was released in March 2011, roughly three months
+scikit-learn 0.7 was released in March 2011, roughly three months
 after the 0.6 release. This release is marked by the speed
 improvements in existing algorithms like k-Nearest Neighbors and
 K-Means algorithm and by the inclusion of an efficient algorithm for
@@ -196,7 +264,7 @@ People that made this release possible preceeded by number of commits:
 0.6
 ===
 
-scikits.learn 0.6 was released on december 2010. It is marked by the
+scikit-learn 0.6 was released on december 2010. It is marked by the
 inclusion of several new modules and a general renaming of old
 ones. It is also marked by the inclusion of new example, including
 applications to real-world datasets.
@@ -207,7 +275,7 @@ applications to real-world datasets.
 
 .. |banner2| image:: auto_examples/applications/images/plot_species_distribution_modeling_1.png
    :height: 150
-   :target: auto_examples/linear_model/plot_species_distribution.html
+   :target: auto_examples/applications/plot_species_distribution_modeling.html
 
 .. |banner3| image:: auto_examples/gaussian_process/images/plot_gp_regression_1.png
    :height: 150
@@ -257,7 +325,7 @@ Changelog
 
   - Improved sparse matrix support, both in main classes
     (:class:`grid_search.GridSearchCV`) as in modules
-    scikits.learn.svm.sparse and scikits.learn.linear_model.sparse.
+    sklearn.svm.sparse and sklearn.linear_model.sparse.
 
   - Lots of cool new examples and a new section that uses real-world
     datasets was created. These include:
@@ -346,8 +414,8 @@ New classes
 
     - New, more efficient LARS algorithm implementation. The Lasso
       variant of the algorithm is also implemented. See
-      :class:`linear_model.lars_path`, :class:`linear_model.LARS` and
-      :class:`linear_model.LassoLARS`.
+      :class:`linear_model.lars_path`, :class:`linear_model.Lars` and
+      :class:`linear_model.LassoLars`.
 
     - New Hidden Markov Models module (see classes
       :class:`hmm.GaussianHMM`, :class:`hmm.MultinomialHMM`,
@@ -356,7 +424,7 @@ New classes
     - New module feature_extraction (see :ref:`class reference
       <feature_extraction_ref>`)
 
-    - New FastICA algorithm in module scikits.learn.fastica
+    - New FastICA algorithm in module sklearn.fastica
 
 
 Documentation
@@ -397,7 +465,7 @@ External dependencies
 ~~~~~~~~~~~~~~~~~~~~~
 
     - Joblib is now a dependencie of this package, although it is
-      shipped with (scikits.learn.externals.joblib).
+      shipped with (sklearn.externals.joblib).
 
 Removed modules
 ~~~~~~~~~~~~~~~
@@ -510,7 +578,7 @@ of commits):
 
 .. _Edouard Duchesnay: http://www.lnao.fr/spip.php?rubrique30
 
-.. _Peter Prettenhofer: <http://sites.google.com/site/peterprettenhofer/>
+.. _Peter Prettenhofer: http://sites.google.com/site/peterprettenhofer/
 
 .. _Alexandre Passos: <http://atpassos.posterous.com>
 
